@@ -1,0 +1,5 @@
+{
+  "name": "LifeOS: Timeline & Reports",
+  "description": "A single-user productivity application for meticulous time planning and tracking. It combines a Kanban-style project manager with a unique, non-scrolling daily calendar to visualize planned vs. actual time. A comprehensive reports tab provides insights into time usage and productivity.",
+  "requestFramePermissions": []
+}
