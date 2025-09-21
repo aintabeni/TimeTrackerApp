@@ -52,17 +52,19 @@ export interface AppState {
   scheduledBlocks: ScheduledBlock[];
   activityLogs: ActivityLog[];
   activeTimer: ActiveTimer | null;
+  draggedItem: { type: 'planned' | 'actual', duration: number, originalId?: string } | null;
 }
 
 export type AppAction =
+  | { type: 'ADD_PROJECT'; payload: Project }
+  | { type: 'UPDATE_PROJECT'; payload: Project }
+  | { type: 'DELETE_PROJECT'; payload: { projectId: string } }
   | { type: 'ADD_TASK'; payload: { task: Task; subtasks: Subtask[] } }
   | { type: 'UPDATE_TASK'; payload: Task }
   | { type: 'DELETE_TASK'; payload: { taskId: string } }
   | { type: 'ADD_SUBTASK'; payload: Subtask }
   | { type: 'UPDATE_SUBTASK'; payload: Subtask }
   | { type: 'DELETE_SUBTASK'; payload: { subtaskId: string } }
-  | { type: 'UPDATE_PROJECT'; payload: Project }
-  | { type: 'DELETE_PROJECT'; payload: { projectId: string } }
   | { type: 'ADD_SCHEDULED_BLOCK'; payload: ScheduledBlock }
   | { type: 'UPDATE_SCHEDULED_BLOCK'; payload: ScheduledBlock }
   | { type: 'DELETE_SCHEDULED_BLOCK'; payload: { id: string } }
@@ -71,4 +73,6 @@ export type AppAction =
   | { type: 'RESUME_TIMER' }
   | { type: 'STOP_TIMER'; payload: { endTime: number } }
   | { type: 'SET_STATE'; payload: AppState }
-  | { type: 'UPDATE_ACTIVITY_LOG'; payload: ActivityLog };
+  | { type: 'UPDATE_ACTIVITY_LOG'; payload: ActivityLog }
+  | { type: 'DRAG_START'; payload: AppState['draggedItem'] }
+  | { type: 'DRAG_END' };

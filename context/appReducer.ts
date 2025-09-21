@@ -10,6 +10,11 @@ const getYYYYMMDD = (date: Date): string => {
 
 export const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
+    case 'ADD_PROJECT':
+      return {
+        ...state,
+        projects: [...state.projects, action.payload],
+      };
     case 'ADD_TASK': {
       const { task, subtasks } = action.payload;
       return {
@@ -203,6 +208,16 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
     }
     case 'SET_STATE':
         return action.payload;
+    case 'DRAG_START':
+        return {
+            ...state,
+            draggedItem: action.payload,
+        };
+    case 'DRAG_END':
+        return {
+            ...state,
+            draggedItem: null,
+        };
     default:
       return state;
   }

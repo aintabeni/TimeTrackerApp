@@ -23,13 +23,23 @@ export const TaskItem: React.FC<TaskItemProps> = ({ item, itemType, project, onE
   const isPaused = activeTimer?.isPaused === true;
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    const duration = item.estDuration || 60;
     e.dataTransfer.setData('application/json', JSON.stringify({
       id: item.id,
       type: itemType,
-      duration: item.estDuration || 60,
+      duration: duration,
     }));
+    // A new item dragged from the kanban is always for the 'planned' pane
+    dispatch({ type: 'DRAG_START', payload: {
+        type: 'planned', 
+        duration: duration,
+    } });
   };
   
+  const handleDragEnd = () => {
+    dispatch({ type: 'DRAG_END' });
+  };
+
   const handlePlay = () => {
     if(isRunning && isPaused) {
        dispatch({type: 'RESUME_TIMER'});
@@ -63,6 +73,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ item, itemType, project, onE
     <div
       draggable
       onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       className={`group p-3 rounded-lg bg-gray-800 border-l-4 ${projectBorder} mb-2 flex justify-between items-center cursor-grab active:cursor-grabbing transition-shadow ${glowClass}`}
     >
       <div className="flex-grow min-w-0 flex items-baseline">

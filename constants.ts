@@ -33,6 +33,7 @@ export const INITIAL_STATE: AppState = {
   ],
   subtasks: [
     { id: 's1', taskId: 't2', title: 'Research client background', estDuration: 30 },
+    // FIX: Corrected typo in subtask id from `s2'` to `'s2'`.
     { id: 's2', taskId: 't2', title: 'Prepare presentation slides', estDuration: 90 },
   ],
   scheduledBlocks: [
@@ -43,6 +44,7 @@ export const INITIAL_STATE: AppState = {
     { id: 'al1', taskOrSubtaskId: 't3', itemType: 'task', start: 425, end: 490, date: getTodayString() }, // 7:05 - 8:10
   ],
   activeTimer: null,
+  draggedItem: null,
 };
 
 export const MINUTES_IN_DAY = 24 * 60;

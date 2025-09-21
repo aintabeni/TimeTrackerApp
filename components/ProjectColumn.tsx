@@ -44,9 +44,16 @@ export const ProjectColumn: React.FC<ProjectColumnProps> = ({ project, tasks, su
     }
   }
   
-  const toggleProjectCollapse = () => setIsProjectCollapsed(prev => !prev);
+  const toggleProjectCollapsed = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    // Prevent collapse when clicking on dropdown trigger
+    if (target.closest('button')) {
+      return;
+    }
+    setIsProjectCollapsed(prev => !prev);
+  };
   
-  const toggleTaskCollapse = (taskId: string) => {
+  const toggleTaskCollapsed = (taskId: string) => {
     setCollapsedTasks(prev => {
         const newSet = new Set(prev);
         if (newSet.has(taskId)) {
@@ -62,26 +69,31 @@ export const ProjectColumn: React.FC<ProjectColumnProps> = ({ project, tasks, su
     <>
       <div className="bg-gray-900/50 rounded-xl mb-4">
         <div 
-          className={`flex justify-between items-center p-2 rounded-t-md ${projectColor} text-white cursor-pointer transition-all ${isProjectCollapsed ? 'rounded-b-md' : ''}`}
-          onClick={toggleProjectCollapse}
+          className={`flex justify-between items-center p-2 rounded-t-md ${projectColor} text-white transition-all ${isProjectCollapsed ? 'rounded-b-md' : ''}`}
         >
-          <div className="flex items-center space-x-2">
+          <div 
+            className="flex items-center space-x-2 flex-grow cursor-pointer"
+            onClick={(e) => {
+               // Prevent collapsing when dropdown button is clicked
+                if (!(e.target as HTMLElement).closest('button')) {
+                    setIsProjectCollapsed(prev => !prev);
+                }
+            }}
+          >
             <ChevronDownIcon className={`w-6 h-6 transition-transform ${isProjectCollapsed ? '-rotate-90' : 'rotate-0'}`} />
             <h3 className="text-xl font-bold">{project.name}</h3>
           </div>
-          <div onClick={e => e.stopPropagation()}>
-            <Dropdown
-              trigger={
-                <button className="p-1 rounded-full text-white/80 hover:bg-white/20 hover:text-white" title="Project options">
-                  <MoreVerticalIcon className="w-5 h-5" />
-                </button>
-              }
-            >
-              <DropdownItem onClick={() => setIsAddTaskModalOpen(true)}>Add Task</DropdownItem>
-              <DropdownItem onClick={() => setIsEditProjectModalOpen(true)}>Edit Project</DropdownItem>
-              <DropdownItem className="text-red-400 hover:bg-red-500/50" onClick={handleDeleteProject}>Delete Project</DropdownItem>
-            </Dropdown>
-          </div>
+          <Dropdown
+            trigger={
+              <button className="p-1 rounded-full text-white/80 hover:bg-white/20 hover:text-white" title="Project options">
+                <MoreVerticalIcon className="w-5 h-5" />
+              </button>
+            }
+          >
+            <DropdownItem onClick={() => setIsAddTaskModalOpen(true)}>Add Task</DropdownItem>
+            <DropdownItem onClick={() => setIsEditProjectModalOpen(true)}>Edit Project</DropdownItem>
+            <DropdownItem className="text-red-400 hover:bg-red-500/50" onClick={handleDeleteProject}>Delete Project</DropdownItem>
+          </Dropdown>
         </div>
         <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isProjectCollapsed ? 'max-h-0' : 'max-h-[10000px]'}`}>
           <div className="p-4 space-y-4">
@@ -105,29 +117,34 @@ export const ProjectColumn: React.FC<ProjectColumnProps> = ({ project, tasks, su
                   ) : (
                     <div className="bg-gray-800/50 rounded-lg">
                       <div 
-                        className="flex justify-between items-start p-3 cursor-pointer"
-                        onClick={() => toggleTaskCollapse(task.id)}
+                        className="flex justify-between items-center p-3"
                       >
-                         <div className="flex items-center space-x-2 min-w-0">
+                         <div 
+                            className="flex items-center space-x-2 min-w-0 flex-grow cursor-pointer"
+                            onClick={(e) => {
+                                // Prevent collapsing when dropdown button is clicked
+                                if (!(e.target as HTMLElement).closest('button')) {
+                                    toggleTaskCollapsed(task.id);
+                                }
+                            }}
+                         >
                            <ChevronDownIcon className={`w-5 h-5 mt-0.5 transition-transform flex-shrink-0 ${isTaskCollapsed ? '-rotate-90' : 'rotate-0'}`} />
                             <div className="min-w-0 flex items-baseline">
                               <p className="font-bold truncate">{task.title}</p>
                               {displayDuration ? <p className="text-xs text-gray-400 ml-2 flex-shrink-0">{displayDuration} min total</p> : null}
                             </div>
                          </div>
-                        <div onClick={e => e.stopPropagation()}>
-                          <Dropdown
-                              trigger={
-                                  <button className="p-1 rounded-full text-gray-400 hover:bg-gray-700 hover:text-white flex-shrink-0" title="More options">
-                                      <MoreVerticalIcon className="w-5 h-5" />
-                                  </button>
-                              }
-                          >
-                              <DropdownItem onClick={() => setAddingSubtaskTo(task)}>Add Subtask</DropdownItem>
-                              <DropdownItem onClick={() => setEditingItem({ item: task, itemType: 'task' })}>Edit Task</DropdownItem>
-                              <DropdownItem className="text-red-400 hover:bg-red-500/50" onClick={() => handleDeleteTask(task)}>Delete Task</DropdownItem>
-                          </Dropdown>
-                        </div>
+                        <Dropdown
+                            trigger={
+                                <button className="p-1 rounded-full text-gray-400 hover:bg-gray-700 hover:text-white flex-shrink-0" title="More options">
+                                    <MoreVerticalIcon className="w-5 h-5" />
+                                </button>
+                            }
+                        >
+                            <DropdownItem onClick={() => setAddingSubtaskTo(task)}>Add Subtask</DropdownItem>
+                            <DropdownItem onClick={() => setEditingItem({ item: task, itemType: 'task' })}>Edit Task</DropdownItem>
+                            <DropdownItem className="text-red-400 hover:bg-red-500/50" onClick={() => handleDeleteTask(task)}>Delete Task</DropdownItem>
+                        </Dropdown>
                       </div>
                       <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isTaskCollapsed ? 'max-h-0' : 'max-h-[1000px]'}`}>
                         <div className="pl-4 pb-2 pr-2 space-y-2 border-l-2 border-gray-700 ml-[23px]">
